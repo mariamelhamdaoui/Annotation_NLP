@@ -79,10 +79,8 @@ public class AnnotatorController {
             model.addAttribute("errorMessage", "Aucune classe disponible pour ce dataset. Contactez l'administrateur.");
         }
 
-        // Récupérer le couple actuel
         CoupleTexte couple = tache.getAssignedCouples().get(index);
 
-        // Vérifier si une annotation existe déjà pour ce couple et cet annotateur
         Annotateur annotator = (Annotateur) user;
         Optional<Annotation> existingAnnotation = annotationRepository.findByCoupleTexteAndAnnotateur(couple, annotator);
         String selectedClass = existingAnnotation.map(Annotation::getClasse).orElse(null);
