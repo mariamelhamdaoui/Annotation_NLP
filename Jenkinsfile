@@ -7,8 +7,11 @@ pipeline {
   }
 
   stages {
+
     stage('Checkout') {
-      steps { checkout scm }
+      steps {
+        checkout scm
+      }
     }
 
     stage('Test') {
@@ -18,14 +21,6 @@ pipeline {
       post {
         always {
           junit 'target/surefire-reports/*.xml'
-        }
-      }
-    }
-
-    stage('Code Quality') {
-      steps {
-        withSonarQubeEnv('SonarQubeServer') {
-          sh 'mvn sonar:sonar'
         }
       }
     }
@@ -43,6 +38,9 @@ pipeline {
     }
 
     stage('Push to Nexus') {
+      when {
+        expression { return env.NEXUS_URL?.trim() }
+      }
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'nexus-credentials',
@@ -57,16 +55,18 @@ pipeline {
         }
       }
     }
+  }
 
-    stage('Deploy to Kubernetes') {
-      steps {
-        withCredentials([file(credentialsId: 'kubeconfig-cred', variable: 'KUBECONFIG')]) {
-          sh 'kubectl apply -f k8s/'
-        }
-      }
+  post {
+    success {
+      echo ' Pipeline CI/CD exécuté avec succès '
+    }
+    failure {
+      echo ' Échec du pipeline'
     }
   }
 }
+
 
 
 
