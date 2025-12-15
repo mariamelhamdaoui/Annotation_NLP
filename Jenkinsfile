@@ -2,8 +2,8 @@ pipeline {
   agent any
 
   environment {
-    NEXUS_URL = "nexus-ip:8082"
-    IMAGE_NAME = "my-app"
+    NEXUS_URL  = "nexus-ip:8082"
+    IMAGE_NAME = "nlp-annotation-app"
   }
 
   stages {
@@ -13,7 +13,6 @@ pipeline {
         checkout scm
       }
     }
-
     stage('Test') {
       steps {
         sh 'mvn test'
@@ -25,32 +24,36 @@ pipeline {
       }
     }
 
+    stage('Code Quality - SonarQube') {
+      steps {
+        withSonarQubeEnv('SonarQubeServer') {
+          sh 'mvn sonar:sonar'
+        }
+      }
+    }
     stage('Build JAR') {
       steps {
-        sh 'mvn package -DskipTests'
+        sh 'mvn clean package -DskipTests'
       }
     }
 
     stage('Build Docker Image') {
       steps {
-        sh 'docker build -t my-app .'
+        sh 'docker build -t ${IMAGE_NAME}:latest .'
       }
     }
 
-    stage('Push to Nexus') {
-      when {
-        expression { return env.NEXUS_URL?.trim() }
-      }
+    stage('Push Docker Image to Nexus') {
       steps {
         withCredentials([usernamePassword(
           credentialsId: 'nexus-credentials',
-          usernameVariable: 'USER',
-          passwordVariable: 'PASS'
+          usernameVariable: 'NEXUS_USER',
+          passwordVariable: 'NEXUS_PASS'
         )]) {
           sh """
-          docker login $NEXUS_URL -u $USER -p $PASS
-          docker tag my-app $NEXUS_URL/$IMAGE_NAME:latest
-          docker push $NEXUS_URL/$IMAGE_NAME:latest
+            docker login ${NEXUS_URL} -u ${NEXUS_USER} -p ${NEXUS_PASS}
+            docker tag ${IMAGE_NAME}:latest ${NEXUS_URL}/${IMAGE_NAME}:latest
+            docker push ${NEXUS_URL}/${IMAGE_NAME}:latest
           """
         }
       }
@@ -59,13 +62,14 @@ pipeline {
 
   post {
     success {
-      echo ' Pipeline CI/CD exécuté avec succès '
+      echo ' Pipeline CI/CD exécuté avec succès !'
     }
     failure {
       echo ' Échec du pipeline'
     }
   }
 }
+
 
 
 
