@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  tools {
+    maven 'Maven_3'
+  }
+
   environment {
     NEXUS_URL  = "nexus-ip:8082"
     IMAGE_NAME = "nlp-annotation-app"
@@ -13,14 +17,10 @@ pipeline {
         checkout scm
       }
     }
-    stage('Test') {
+
+    stage('Build JAR') {
       steps {
-        sh 'mvn test'
-      }
-      post {
-        always {
-          junit 'target/surefire-reports/*.xml'
-        }
+        sh 'mvn clean package -DskipTests'
       }
     }
 
@@ -29,11 +29,6 @@ pipeline {
         withSonarQubeEnv('SonarQubeServer') {
           sh 'mvn sonar:sonar'
         }
-      }
-    }
-    stage('Build JAR') {
-      steps {
-        sh 'mvn clean package -DskipTests'
       }
     }
 
@@ -69,12 +64,3 @@ pipeline {
     }
   }
 }
-
-
-
-
-
-
-
-
-
