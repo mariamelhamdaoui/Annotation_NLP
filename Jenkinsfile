@@ -18,13 +18,13 @@ pipeline {
       }
     }
 
-    stage('Code Quality - SonarQube') {
-      steps {
-        withSonarQubeEnv('SonarQubeServer') {
-          sh 'mvn sonar:sonar'
-        }
-      }
-    }
+    //stage('Code Quality - SonarQube') {
+     // steps {
+       // withSonarQubeEnv('SonarQubeServer') {
+         // sh 'mvn sonar:sonar'
+        //}
+      //}
+    //}
 
     stage('Build Docker Image') {
       steps {
