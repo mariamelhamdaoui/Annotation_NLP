@@ -11,21 +11,13 @@ pipeline {
   }
 
   stages {
-
-
-    //stage('Code Quality - SonarQube') {
-     // steps {
-       // withSonarQubeEnv('SonarQubeServer') {
-         // sh 'mvn sonar:sonar'
-        //}
-      //}
-    //}
-
-    stage('Build Docker Image') {
+    stage('Checkout Code') {
       steps {
-        sh 'docker build -t ${IMAGE_NAME}:latest .'
+        checkout scm
       }
     }
+
+    
 
     stage('Push Docker Image to Nexus') {
       steps {
