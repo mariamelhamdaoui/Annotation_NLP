@@ -1,10 +1,6 @@
 pipeline {
   agent any
 
-  tools {
-    maven 'Maven_3'
-  }
-
   environment {
     NEXUS_URL  = "nexus-ip:8082"
     IMAGE_NAME = "nlp-annotation-app"
