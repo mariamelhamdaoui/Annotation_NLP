@@ -18,12 +18,6 @@ pipeline {
       }
     }
 
-    stage('Build JAR') {
-      steps {
-        sh 'mvn clean package -DskipTests'
-      }
-    }
-
     stage('Code Quality - SonarQube') {
       steps {
         withSonarQubeEnv('SonarQubeServer') {
