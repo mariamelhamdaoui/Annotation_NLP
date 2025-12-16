@@ -9,7 +9,16 @@ pipeline {
   stages {
     stage('Checkout Code') {
       steps {
-        checkout scm
+        // Clone explicite au lieu de checkout scm
+        git branch: 'main', 
+            url: 'https://github.com/mariamelhamdaoui/Annotation_NLP.git',
+      }
+    }
+    stage('Build Docker Image') {
+      steps {
+        sh """
+          docker build -t ${IMAGE_NAME}:latest .
+        """
       }
     }
 
