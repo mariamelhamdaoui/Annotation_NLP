@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_URL = "localhost:8083"
+        NEXUS_REGISTRY = "localhost:8083"
         IMAGE_NAME = "annotation-nlp-app"
         IMAGE_TAG = "v1"
     }
@@ -45,13 +45,13 @@ pipeline {
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
                     sh '''
-                    docker login http://${NEXUS_URL} -u $NEXUS_USER -p $NEXUS_PASS
+                    docker login NEXUS_REGISTRY -u $NEXUS_USER -p $NEXUS_PASS
 
                     # Image générée par docker-compose
                     IMAGE_ID=$(docker images -q | head -1)
 
-                    docker tag $IMAGE_ID ${NEXUS_URL}/$IMAGE_NAME:$IMAGE_TAG
-                    docker push ${NEXUS_URL}/$IMAGE_NAME:$IMAGE_TAG
+                    docker tag $IMAGE_ID ${NEXUS_REGISTRY}/$IMAGE_NAME:$IMAGE_TAG
+                    docker push ${NEXUS_REGISTRY}/$IMAGE_NAME:$IMAGE_TAG
                     '''
                 }
             }
