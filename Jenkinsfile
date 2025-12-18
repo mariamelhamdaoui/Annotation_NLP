@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "annotation-nlp-app"
         IMAGE_TAG = "v1"
+        NEXUS_URL="localhost:8083"
     }
 
     options {
@@ -33,31 +34,30 @@ pipeline {
         stage('Build Image Docker (docker-compose)') {
             steps {
                 sh 'docker-compose build'
+                sh "docker tag nlpapp_annotation-nlp-app:latest ${NEXUS_URL}/repository/docker-hosted/${IMAGE_NAME}:${IMAGE_TAG}"
             }
         }
 
-        stage('Tag & Push Image vers Nexus') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'nexus-credentials',
-            usernameVariable: 'NEXUS_USER',
-            passwordVariable: 'NEXUS_PASS'
-        )]) {
-            sh '''
-            echo "🔐 Login Nexus Docker Registry"
-            docker login localhost:8083 -u $NEXUS_USER -p $NEXUS_PASS
+         stage('Tag & Push Image vers Nexus') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'nexus-credentials', // ID des credentials Jenkins
+                    usernameVariable: 'NEXUS_USER',
+                    passwordVariable: 'NEXUS_PASS'
+                )]) {
+                    script {
+                        // Login sur Nexus
+                        sh "docker login ${NEXUS_URL} -u $NEXUS_USER -p $NEXUS_PASS"
 
-            echo "🏷️ Tag de l'image locale"
-            docker tag nlp_annotation_pipeline-nlpapp:latest \
-                localhost:8083/docker-hosted/annotation-nlp-app:v1
+                        // Tag de l'image locale pour le repository Nexus
+                        sh "docker tag ${IMAGE_NAME}:latest ${NEXUS_URL}/repository/docker-hosted/${IMAGE_NAME}:${IMAGE_TAG}"
 
-            echo "📤 Push vers Nexus"
-            docker push localhost:8083/docker-hosted/annotation-nlp-app:v1
-            '''
+                        // Push de l'image vers Nexus
+                        sh "docker push ${NEXUS_URL}/repository/docker-hosted/${IMAGE_NAME}:${IMAGE_TAG}"
+                    }
+                }
+            }
         }
-    }
-}
-
 
     }
 }
