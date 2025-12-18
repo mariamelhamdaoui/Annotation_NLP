@@ -45,7 +45,7 @@ pipeline {
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
                     sh '''
-                    docker login NEXUS_REGISTRY -u $NEXUS_USER -p $NEXUS_PASS
+                    docker login ${NEXUS_REGISTRY} -u $NEXUS_USER -p $NEXUS_PASS
 
                     # Image générée par docker-compose
                     IMAGE_ID=$(docker images -q | head -1)
