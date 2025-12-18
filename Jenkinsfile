@@ -44,13 +44,13 @@ pipeline {
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
                     sh '''
-                    docker login localhost:8082 -u $NEXUS_USER -p $NEXUS_PASS
+                    docker login localhost:8082/repository/docker-hosted -u $NEXUS_USER -p $NEXUS_PASS
 
                     # Image générée par docker-compose
                     IMAGE_ID=$(docker images -q | head -1)
 
-                    docker tag $IMAGE_ID localhost:8082/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
-                    docker push localhost:8082/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
+                    docker tag $IMAGE_ID localhost:8082/repository/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
+                    docker push localhost:8082/repository/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
                     '''
                 }
             }
