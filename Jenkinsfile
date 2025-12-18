@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_REGISTRY = "localhost:8083"
         IMAGE_NAME = "annotation-nlp-app"
         IMAGE_TAG = "v1"
     }
@@ -50,8 +49,8 @@ pipeline {
                     # Image générée par docker-compose
                     IMAGE_ID=$(docker images -q | head -1)
 
-                    docker tag $IMAGE_ID ${NEXUS_REGISTRY}/$IMAGE_NAME:$IMAGE_TAG
-                    docker push ${NEXUS_REGISTRY}/$IMAGE_NAME:$IMAGE_TAG
+                    docker tag $IMAGE_ID localhost:8083/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
+                    docker push localhost:8083/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
                     '''
                 }
             }
