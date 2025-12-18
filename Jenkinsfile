@@ -48,7 +48,7 @@ pipeline {
             docker login localhost:8083 -u $NEXUS_USER -p $NEXUS_PASS
 
             echo "🏷️ Tag de l'image locale"
-            docker tag annotation-nlp-app:latest \
+            docker tag nlp_annotation_pipeline-nlpapp:latest \
                 localhost:8083/docker-hosted/annotation-nlp-app:v1
 
             echo "📤 Push vers Nexus"
