@@ -33,8 +33,9 @@ pipeline {
 
         stage('Build Image Docker (docker-compose)') {
             steps {
-                sh 'docker-compose build'
-                sh "docker tag nlpapp_annotation-nlp-app:latest ${NEXUS_URL}/repository/docker-hosted/${IMAGE_NAME}:${IMAGE_TAG}"
+                script {
+            docker.build("${IMAGE_NAME}:latest")
+            }
             }
         }
 
