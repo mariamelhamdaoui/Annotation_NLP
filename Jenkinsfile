@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NEXUS_REGISTRY = "localhost:8083"
+        NEXUS_REGISTRY = "http://localhost:8083"
         IMAGE_NAME = "annotation-nlp-app"
         IMAGE_TAG = "v1"
     }
