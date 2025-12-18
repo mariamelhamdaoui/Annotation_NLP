@@ -37,21 +37,25 @@ pipeline {
         }
 
         stage('Tag & Push Image vers Nexus') {
-            steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'nexus-credentials',
-                    usernameVariable: 'NEXUS_USER',
-                    passwordVariable: 'NEXUS_PASS'
-                )]) {
-                    sh '''
-                    docker login localhost:8083 -u $NEXUS_USER -p $NEXUS_PASS
+                steps {
+        withCredentials([usernamePassword(
+            credentialsId: 'nexus-credentials',
+            usernameVariable: 'NEXUS_USER',
+            passwordVariable: 'NEXUS_PASS'
+        )]) {
+            sh '''
+            echo " Login Nexus Docker Registry"
+            docker login localhost:8083 -u $NEXUS_USER -p $NEXUS_PASS
 
+            echo " Tag de l'image locale"
+            docker tag nlp_annotation_pipeline-nlpapp:latest \
+                localhost:8083/docker-hosted/annotation-nlp-app:v1
 
-                    docker tag $IMAGE_ID localhost:8083/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
-                    docker push localhost:8083/repository/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
-                    '''
-                }
-            }
+            echo " Push vers Nexus"
+            docker push localhost:8083/docker-hosted/annotation-nlp-app:v1
+            '''
+        }
+    }
         }
 
     }
