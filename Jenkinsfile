@@ -44,11 +44,11 @@ pipeline {
                     passwordVariable: 'NEXUS_PASS'
                 )]) {
                     sh '''
-                    docker login 172.17.0.1:8082 -u $NEXUS_USER -p $NEXUS_PASS
+                    docker login localhost:8083 -u $NEXUS_USER -p $NEXUS_PASS
 
 
-                    docker tag $IMAGE_ID 172.17.0.1:8082/repository/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
-                    docker push 172.17.0.1:8082/repository/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
+                    docker tag $IMAGE_ID localhost:8083/repository/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
+                    docker push localhost:8083/repository/docker-hosted/$IMAGE_NAME:$IMAGE_TAG
                     '''
                 }
             }
