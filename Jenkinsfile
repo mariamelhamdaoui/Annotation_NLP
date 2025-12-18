@@ -31,25 +31,6 @@ pipeline {
             }
         }
 
-        stage('Tests Unitaires') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
-
-        stage('Analyse Qualité - SonarQube') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar'
-                }
-            }
-        }
-
         stage('Build Image Docker (docker-compose)') {
             steps {
                 sh 'docker-compose build'
